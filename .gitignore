@@ -1,0 +1,6 @@
+# Pydev
+.project
+.pydevproject
+
+# Python
+*.pyc
