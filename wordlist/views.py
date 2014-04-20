@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from django.views.generic import ListView, DetailView
+from models import Wordlist
 
-# Create your views here.
+class WordlistList(ListView):
+    model = Wordlist
+    
+class WordlistDetail(DetailView):
+    model = Wordlist
