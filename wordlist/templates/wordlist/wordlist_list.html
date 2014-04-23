@@ -1,6 +1,6 @@
 <h2>Wordlists</h2>
 <ul>
     {% for wordlist in object_list %}
-        <li><a href="{% url 'wordlist' wordlist.id %}">{{ wordlist.name }}</a></li>
+        <li><a href="{{ wordlist.get_absolute_url }}">{{ wordlist.name }}</a></li>
     {% endfor %}
 </ul>
