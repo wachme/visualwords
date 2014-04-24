@@ -1,5 +1,9 @@
 import django.views.generic as views
 import mixins
+from django.views.generic import View
+
+class View(mixins.JsonResponseMixin, View):
+    pass
 
 class DetailView(mixins.SingleObjectJsonResponseMixin, views.detail.BaseDetailView):
     pass

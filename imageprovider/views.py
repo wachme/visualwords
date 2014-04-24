@@ -1,10 +1,7 @@
-from helpers.jsonviews.mixins import JsonResponseMixin
-from django.views.generic import View
+from helpers.jsonviews import View
 from providers import GoogleProvider
 
-from time import sleep
-
-class Search(JsonResponseMixin, View):
+class Search(View):
     def __init__(self):
         self._provider = None
     
