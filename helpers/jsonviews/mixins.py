@@ -24,24 +24,25 @@ class JsonResponseMixin(object):
         response_kwargs['content_type'] = 'application/json'
         content = serialize(data, converter) if encode else data
         return HttpResponse(content, **response_kwargs)
-    
+   
+class ContextJsonResponseMixin(JsonResponseMixin):  
     def render_to_response(self, context, **response_kwargs):
         return self.render_to_json_response(self.get_response_data(context))
     
     def get_response_data(self, context):
         raise ImproperlyConfigured('JsonResponseMixin requires implementation for get_response_data()')
 
-class SingleObjectJsonResponseMixin(JsonResponseMixin):
+class SingleObjectJsonResponseMixin(ContextJsonResponseMixin):
     def get_response_data(self, context):
         return context['object']
     
     
-class MultipleObjectJsonResponseMixin(JsonResponseMixin):
+class MultipleObjectJsonResponseMixin(ContextJsonResponseMixin):
     def get_response_data(self, context):
         return context['object_list']
     
     
-class FormJsonResponseMixin(JsonResponseMixin):
+class FormJsonResponseMixin(ContextJsonResponseMixin):
     success_url = '/'
     
     def success_msg(self, form):
