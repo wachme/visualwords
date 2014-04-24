@@ -7,11 +7,12 @@ class DetailView(mixins.SingleObjectJsonResponseMixin, views.detail.BaseDetailVi
 class ListView(mixins.MultipleObjectJsonResponseMixin, views.list.BaseListView):
     pass
 
-class CreateView(mixins.JsonResponseMixin, views.edit.BaseCreateView):
+class CreateView(mixins.FormJsonResponseMixin, views.edit.BaseCreateView):
+    def success_msg(self, form):
+        return self.object
+
+class UpdateView(mixins.FormJsonResponseMixin, views.edit.BaseUpdateView):
     pass
 
-class UpdateView(mixins.JsonResponseMixin, views.edit.BaseUpdateView):
-    pass
-
-class DeleteView(mixins.JsonResponseMixin, views.edit.BaseDeleteView):
+class DeleteView(mixins.DeletionJsonResponseMixin, views.edit.BaseDetailView):
     pass
