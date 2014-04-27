@@ -22,7 +22,9 @@ class WordlistTest(TestCase):
             name = 'Colors'+str(i)
             resp = self.client.post('/add/',
                              {
-                              'name': name
+                              'name': name,
+                              's_lang': 'sl',
+                              't_lang': 'tl'
                               })
             self.assertEquals(i+1, Wordlist.objects.count());
             object = loads(resp.content)

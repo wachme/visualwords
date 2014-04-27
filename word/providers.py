@@ -1,10 +1,11 @@
-import urllib2
+from urllib2 import build_opener, quote, unquote
+from simplejson import loads, dumps
 import re
 
 def browser_opener():
     self = browser_opener
     if not hasattr(self, 'opener'):
-        self.opener = urllib2.build_opener()
+        self.opener = build_opener()
         self.opener.addheaders = [('User-agent', 'Mozilla/5.0 (X11; Linux x86_64) '
                                   'AppleWebKit/537.36 (KHTML, like Gecko) '
                                   'Chrome/30.0.1599.114 Safari/537.36')]
@@ -23,14 +24,14 @@ class GoogleImages(object):
             
         
     def get_url(self, word, i):
-        return 'https://www.google.pl/search?q=%s&tbm=isch&ijn=%d' % (word, i)
+        return 'https://www.google.pl/search?q=%s&tbm=isch&ijn=%d' % (quote(word), i)
     
     def parse_response(self, data, n):
         items = re.findall(r'\<a class\=\"rg_l\" href\=\".+?imgurl\=(.*?)\&amp'
                            '.+?data\-src\=\"(.*?)\"', data)[:n]
         
         def u(s):
-            return urllib2.unquote(urllib2.unquote(s))
+            return unquote(unquote(s))
         
         return [ {'origin': u(i[0]), 'preview': u(i[1])} for i in items ]
         
@@ -38,5 +39,19 @@ class GoogleImages(object):
 class GoogleTranslations(object):
     opener = browser_opener()
     
-    def findTranslations(self, word):
-        return []
+    def findTranslations(self, word, s_lang, t_lang):
+        return self.get_data(word, s_lang, t_lang)
+    
+    def get_data(self, word, s_lang, t_lang):
+        data = self.opener.open(self.get_url(word, s_lang, t_lang)).read()
+        for r in [r'(?<=[\[\,])\,', r'\,(?=[\]\,])']:
+            data = re.sub(r, '', data)
+        return loads(data)
+    
+    def get_url(self, word, s_lang, t_lang):
+        return ('http://translate.google.pl/translate_a/'
+        't?client=t&sl=%s&tl=%s&ie=UTF-8&oe=UTF-8&q=%s') % (
+                                                            quote(s_lang),
+                                                            quote(t_lang),
+                                                            quote(word.encode('utf8')))
+    

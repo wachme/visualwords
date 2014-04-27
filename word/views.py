@@ -1,20 +1,21 @@
-from helpers.jsonviews import View
+from helpers.jsonviews import View, FormView
+from word import forms
 from providers import GoogleImages, GoogleTranslations
 
-class Images(View):
+from django.http import HttpResponse
+
+class Images(FormView):
+    form_class = forms.ImagesForm
+    default_data = { 'n': 1 }
     provider = GoogleImages()
     
-    def post(self, request, *args, **kwargs):
-        if not 'word' in request.POST:
-            return self.render_to_json_response('"word" parameter required', status=400)
-        data = self.provider.findImages(request.POST.get('word'), int(request.POST.get('n', 1)))
-        return self.render_to_json_response(data)
+    def success_msg(self, form):
+        return self.provider.findImages(**form.cleaned_data)
     
-class Translations(View):
+    
+class Translations(FormView):
+    form_class = forms.TranslationsForm
     provider = GoogleTranslations()
     
-    def post(self, request, *args, **kwargs):
-        if not 'word' in request.POST:
-            return self.render_to_json_response('"word" parameter required', status=400)
-        data = self.provider.findTranslations(request.POST.get('word'))
-        return self.render_to_json_response(data)
+    def success_msg(self, form):
+        return self.provider.findTranslations(**form.cleaned_data)

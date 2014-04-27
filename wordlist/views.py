@@ -21,7 +21,7 @@ class WordlistCreate(jsonviews.CreateView):
     
 class WordlistUpdate(jsonviews.UpdateView):
     model = Wordlist
-    
+
 class WordlistDelete(jsonviews.DeleteView):
     model = Wordlist
 
@@ -30,12 +30,8 @@ class WordlistDelete(jsonviews.DeleteView):
 class WordCreate(jsonviews.CreateView):
     model = Word
     
-    def get_form_kwargs(self):
-        kwargs = super(WordCreate, self).get_form_kwargs()
-        if 'wordlist_pk' in self.kwargs:
-            kwargs['data'] = kwargs['data'].copy()
-            kwargs['data']['wordlist'] = self.kwargs['wordlist_pk']
-        return kwargs
+    def get_default_data(self):
+        return { 'wordlist': self.kwargs['wordlist_pk'] } if 'wordlist_pk' in self.kwargs else {}
         
         
 class WordUpdate(jsonviews.UpdateView):

@@ -19,7 +19,7 @@ class JsonResponseMixin(object):
                         return model_to_dict(o)
                 return converter(o, _default) if callable(converter) else _default(o)
                 
-            return json.dumps(data, default=default)
+            return json.dumps(data, default=default, ensure_ascii=False)
         
         response_kwargs['content_type'] = 'application/json'
         content = serialize(data, converter) if encode else data
@@ -44,6 +44,7 @@ class MultipleObjectJsonResponseMixin(ContextJsonResponseMixin):
     
 class FormJsonResponseMixin(ContextJsonResponseMixin):
     success_url = '/'
+    default_data = {}
     
     def success_msg(self, form):
         return True
@@ -54,6 +55,16 @@ class FormJsonResponseMixin(ContextJsonResponseMixin):
     def render_to_response(self, context, **response_kwargs):
         if self.request.method == 'GET':
             return self.render_to_json_response('GET method not allowed', status=405)
+    
+    def get_default_data(self):
+        return self.default_data
+    
+    def get_form_kwargs(self):
+        kwargs = super(FormJsonResponseMixin, self).get_form_kwargs()
+        data = kwargs['data'].dict() if 'data' in kwargs else {}
+        kwargs['data'] = dict(self.get_default_data(), **data)
+
+        return kwargs
     
     def form_valid(self, form):
         super(FormJsonResponseMixin, self).form_valid(form)
