@@ -24,7 +24,7 @@ class GoogleImages(object):
             
         
     def get_url(self, word, i):
-        return 'https://www.google.pl/search?q=%s&tbm=isch&ijn=%d' % (quote(word), i)
+        return 'https://www.google.com/search?q=%s&tbm=isch&ijn=%d' % (quote(word), i)
     
     def parse_response(self, data, n):
         items = re.findall(r'\<a class\=\"rg_l\" href\=\".+?imgurl\=(.*?)\&amp'
@@ -40,7 +40,10 @@ class GoogleTranslations(object):
     opener = browser_opener()
     
     def findTranslations(self, word, s_lang, t_lang):
-        return self.get_data(word, s_lang, t_lang)
+        return self.get_translations(self.get_data(word, s_lang, t_lang))
+    
+    def get_translations(self, data):
+        return [ t[1] for t in data[1] ] if isinstance(data[1], list) else False
     
     def get_data(self, word, s_lang, t_lang):
         data = self.opener.open(self.get_url(word, s_lang, t_lang)).read()
@@ -49,7 +52,7 @@ class GoogleTranslations(object):
         return loads(data)
     
     def get_url(self, word, s_lang, t_lang):
-        return ('http://translate.google.pl/translate_a/'
+        return ('http://translate.google.com/translate_a/'
         't?client=t&sl=%s&tl=%s&ie=UTF-8&oe=UTF-8&q=%s') % (
                                                             quote(s_lang),
                                                             quote(t_lang),
