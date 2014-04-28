@@ -37,7 +37,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'wordlist',
-    'word'
+    'word',
+    'client'
 )
 
 MIDDLEWARE_CLASSES = (

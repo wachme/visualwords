@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.test import Client
 from models import Wordlist
 from json import loads
+from django.core.urlresolvers import reverse
 
 class WordlistTest(TestCase):
     wordlist_count = 5
@@ -20,7 +21,7 @@ class WordlistTest(TestCase):
         # Create objects
         for i in range(0, self.wordlist_count):
             name = 'Colors'+str(i)
-            resp = self.client.post('/add/',
+            resp = self.client.post(reverse('wordlist-create'),
                              {
                               'name': name,
                               's_lang': 'sl',
@@ -41,7 +42,7 @@ class WordlistTest(TestCase):
                         'wordlist': object['id'],
                         'translation': 'translation'+str(j)
                         }
-                resp = self.client.post('/words/add/', word)
+                resp = self.client.post(reverse('word-create'), word)
                 self.assertEquals(j+1, Wordlist.objects.get(pk=object['id']).word_set.count());
                 data = loads(resp.content)
                 self.assertIn('id', data)
@@ -54,14 +55,14 @@ class WordlistTest(TestCase):
                 words[i].append(data)
 
         # List objects
-        resp = self.client.get('/')
+        resp = self.client.get(reverse('wordlist-list'))
         data = loads(resp.content)
         self.assertListEqual(objects, data)
         
         # Update object
         object = objects[0]
         object['name'] = 'CHANGED'
-        resp = self.client.post('/'+str(object['id'])+'/edit/',
+        resp = self.client.post(reverse('wordlist-update', kwargs={'pk': str(object['id'])}),
                                 {
                                  'name': object['name']
                                  })
@@ -71,13 +72,13 @@ class WordlistTest(TestCase):
         
         # Read object
         object = detailed(0)
-        resp = self.client.get('/'+str(object['id'])+'/')
+        resp = self.client.get(reverse('wordlist-detail', kwargs={'pk': str(object['id'])}))
         data = loads(resp.content)
         self.assertDictEqual(object, data)
         
         # Delete object
         object = objects[0]
-        resp = self.client.post('/'+str(object['id'])+'/delete/')
+        resp = self.client.post(reverse('wordlist-delete', kwargs={'pk': str(object['id'])}))
         data = loads(resp.content)
         self.assertRaises(Exception, lambda : Wordlist.objects.get(pk=object['id']))
         self.assertEquals(True, data)

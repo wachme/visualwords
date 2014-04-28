@@ -21,7 +21,7 @@ class JsonResponseMixin(object):
                 
             return json.dumps(data, default=default, ensure_ascii=False)
         
-        response_kwargs['content_type'] = 'application/json'
+        response_kwargs['content_type'] = 'application/json; charset=utf-8'
         content = serialize(data, converter) if encode else data
         return HttpResponse(content, **response_kwargs)
    
