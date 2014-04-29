@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 
 api_patterns = [
     url(r'^', include('wordlist.urls')),
-    url(r'^', include('word.urls'))
+    url(r'^provider/', include('provider.urls'))
 ]
 
 urlpatterns = patterns('',

@@ -65,7 +65,7 @@ class WordlistTest(TestCase):
         # Update object
         object = objects[0]
         object['name'] = 'CHANGED'
-        resp = self.client.put(reverse('wordlist-detail', kwargs={'pk': str(object['id'])}), dumps(
+        resp = self.client.patch(reverse('wordlist-detail', kwargs={'pk': str(object['id'])}), dumps(
                                 {
                                  'name': object['name']
                                  }), content_type='application/json')
