@@ -1,41 +1,30 @@
-from helpers import jsonviews
-from models import Wordlist, Word
+from restless import modelviews as views
+from models import *
+from restless.models import serialize
 
-# Wordlist views
-
-class WordlistList(jsonviews.ListView):
-    model = Wordlist
-    
-class WordlistDetail(jsonviews.DetailView):
+class WordlistList(views.ListEndpoint):
     model = Wordlist
 
-    def render_to_response(self, context, **response_kwargs):
-        return self.render_to_json_response(self.get_response_data(context), converter=
-                                            lambda o, default : dict(default(o), words=o.word_set.all())
-                                                if isinstance(o, Wordlist)
-                                                else default(o))
-    
-    
-class WordlistCreate(jsonviews.CreateView):
+class WordlistDetail(views.DetailEndpoint):
     model = Wordlist
     
-class WordlistUpdate(jsonviews.UpdateView):
-    model = Wordlist
-
-class WordlistDelete(jsonviews.DeleteView):
-    model = Wordlist
-
-# Word views
-
-class WordCreate(jsonviews.CreateView):
-    model = Word
-    
-    def get_default_data(self):
-        return { 'wordlist': self.kwargs['wordlist_pk'] } if 'wordlist_pk' in self.kwargs else {}
+    def fill_data(self, request, *args, **kwargs):
+        instance = self.get_instance(self, request, *args, **kwargs)
+        request.data = dict(serialize(instance), **request.data)
         
-        
-class WordUpdate(jsonviews.UpdateView):
-    model = Word
+    def put(self, request, *args, **kwargs):
+        self.fill_data(request, *args, **kwargs)
+        return super(WordlistDetail, self).put(request, *args, **kwargs)
     
-class WordDelete(jsonviews.DeleteView):
+    def serialize(self, obj):
+        return serialize(obj, include=[ ('words', lambda o : serialize(o.word_set)) ])
+    
+
+class WordCreate(views.ListEndpoint):
     model = Word
+    methods = ['POST']
+
+class WordUpdate(views.DetailEndpoint):
+    model = Word
+    methods = ['PUT', 'DELETE']
+
