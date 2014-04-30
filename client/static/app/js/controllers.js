@@ -1,5 +1,5 @@
-var visualwordsControllers = angular.module('visualwordsControllers', []);
+var controllers = angular.module('controllers', []);
 
-visualwordsControllers.controller('WordlistsCtrl', function($scope, Wordlist) {
+controllers.controller('WordlistsCtrl', function($scope, Wordlist) {
     $scope.wordlists = Wordlist.query();
 });

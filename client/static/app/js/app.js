@@ -1,13 +1,18 @@
-var visualwordsApp = angular.module('visualwordsApp', [
+var app = angular.module('app', [
     'ngRoute',
-    'visualwordsControllers',
-    'visualwordsServices'
+    'controllers',
+    'services',
+    'config'
 ]);
 
-visualwordsApp.config(function($routeProvider) {
-    $routeProvider
-        .when('/', {
-            templateUrl: '/static/app/partials/wordlist-list.html',
-            controller: 'WordlistsCtrl'
-        })
-});
+app
+    .config(function($routeProvider, TPL_URL) {
+        $routeProvider
+            .when('/', {
+                templateUrl: TPL_URL+'/wordlist-list.html',
+                controller: 'WordlistsCtrl'
+            })
+    })
+
+var config = angular.module('config', [])
+    .constant('API_URL', '/api');
