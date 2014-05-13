@@ -6,14 +6,21 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.7/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.7/angular-route.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.7/angular-resource.min.js"></script>
+    
     <script src="{% static "app/js/app.js" %}"></script>
     <script src="{% static "app/js/controllers.js" %}"></script>
     <script src="{% static "app/js/services.js" %}"></script>
+    <script src="{% static "app/js/directives.js" %}"></script>
     <script>
         angular.module('config').constant('TPL_URL', '{% static "app/partials" %}')
     </script>
+    
+    <link rel="stylesheet" href="{% static "lib/bootstrap/css/bootstrap.min.css" %}" />
   </head>
   <body>
-  <div ng-view></div>
+    <div ng-view class="container"></div>
+    
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="{% static "lib/bootstrap/js/bootstrap.min.js" %}"></script>
   </body>
 </html>

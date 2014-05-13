@@ -36,4 +36,15 @@ services
                 transformRequest: transformRequest
             }
         });
+    })
+    
+    .factory('Languages', function($http, API_URL) {
+        // TODO: load from API
+        return [
+            { name: 'polish', value: 'pl' },
+            { name: 'english', value: 'en' },
+            { name: 'russian', value: 'ru' },
+            { name: 'french', value: 'fr' },
+            { name: 'german', value: 'de' },
+        ];
     });

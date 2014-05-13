@@ -1,5 +1,23 @@
-<ul>
-    <li ng-repeat="wordlist in wordlists">
-        {{ wordlist.name }}
-    </li>
-</ul>
+<div class="panel panel-default">
+  <div class="panel-heading clearfix">
+    <h2>
+      Wordlists
+    
+      <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#create-modal">
+        <span class="glyphicon glyphicon-plus"></span> Create wordlist
+      </button>
+    </h2>
+  </div>
+  <div class="panel-body">
+    <ul class="nav nav-pills nav-stacked">
+      <li ng-repeat="wordlist in wordlists">
+        <a ng-href="#/{{ wordlist.id }}">
+          {{ wordlist.name }}
+          <small class="badge pull-right">{{ wordlist.s_lang }} <span class="glyphicon glyphicon-arrow-right"></span> {{ wordlist.t_lang }}</small>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<create-wordlist-modal id="create-modal" create="create"></create-wordlist-modal>
