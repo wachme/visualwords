@@ -3,5 +3,6 @@ import views
 
 urlpatterns = patterns('',
     url(r'^images/$', views.Images.as_view(), name='provider-images'),
-    url(r'^translations/$', views.Translations.as_view(), name='provider-translations')
+    url(r'^translations/$', views.Translations.as_view(), name='provider-translations'),
+    url(r'^languages/$', views.Languages.as_view(), name='provider-languages')
 )

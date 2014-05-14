@@ -13,11 +13,11 @@
           </div>
           <div class="form-group">
             <label>Source language</label>
-            <select ng-model="newWordlist.s_lang" ng-options="l.value as l.name+' ('+l.value+')' for l in languages | filter:{value:'!'+newWordlist.t_lang}" class="form-control"></select>
+            <language-input ng-model="newWordlist.s_lang" opposed="newWordlist.t_lang" class="form-control" required />
           </div>
           <div class="form-group">
             <label>Target language</label>
-            <select ng-model="newWordlist.t_lang" ng-options="l.value as l.name+' ('+l.value+')' for l in languages | filter:{value:'!'+newWordlist.s_lang}" class="form-control"></select>
+            <language-input ng-model="newWordlist.t_lang" opposed="newWordlist.s_lang" class="form-control" required />
           </div>
         </div>
         <div class="modal-footer">

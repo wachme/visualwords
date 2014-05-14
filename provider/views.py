@@ -24,3 +24,9 @@ class Translations(Endpoint):
             return self.provider.findTranslations(**form.cleaned_data)
         
         raise HttpError(400, 'Invalid Data', errors=form.errors)
+    
+class Languages(Endpoint):
+    provider = GoogleTranslations()
+    
+    def get(self, request):
+        return self.provider.get_languages()

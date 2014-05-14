@@ -58,3 +58,12 @@ class GoogleTranslations(object):
                                                             quote(t_lang),
                                                             quote(word.encode('utf8')))
     
+    def get_languages(self):
+        # TODO: load languages from the service
+        return [
+                { 'name': 'polish', 'value': 'pl' },
+                { 'name': 'english', 'value': 'en' },
+                { 'name': 'russian', 'value': 'ru' },
+                { 'name': 'french', 'value': 'fr' },
+                { 'name': 'german', 'value': 'de' },
+            ]

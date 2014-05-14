@@ -39,12 +39,9 @@ services
     })
     
     .factory('Languages', function($http, API_URL) {
-        // TODO: load from API
-        return [
-            { name: 'polish', value: 'pl' },
-            { name: 'english', value: 'en' },
-            { name: 'russian', value: 'ru' },
-            { name: 'french', value: 'fr' },
-            { name: 'german', value: 'de' },
-        ];
+        return (result = angular.extend([], {
+            $promise: $http.get(API_URL+'/provider/languages/').success(function(data) {
+                angular.extend(result, data);
+            })
+        }));
     });
