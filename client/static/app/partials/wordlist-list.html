@@ -1,16 +1,28 @@
 <div class="panel panel-default">
   <div class="panel-heading clearfix">
-    <h2>
-      Wordlists
+    <div class="row">
+      <div class="col-xs-6">
+        <h2>Wordlists</h2>
+      </div>
+      <div class="col-xs-6 text-right">
+        <button class="btn btn-primary" data-toggle="modal" data-target="#create-modal">
+          <span class="glyphicon glyphicon-plus"></span><span class="hidden-xs"> Create wordlist</span>
+        </button>
+      </div>
+    </div>
     
-      <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#create-modal">
-        <span class="glyphicon glyphicon-plus"></span> Create wordlist
-      </button>
-    </h2>
+    <div class="form-inline">
+        <div class="form-group has-feedback text-muted">
+          <label class="control-label"></label>
+          <input ng-model="nameSearch" id="name-search" type="search" class="form-control input-sm" placeholder="Search" />
+          <label for="name-search" class="glyphicon glyphicon-search form-control-feedback"></label>
+        </div>
+    </div>
+    
   </div>
   <div class="panel-body">
     <ul class="nav nav-pills nav-stacked">
-      <li ng-repeat="wordlist in wordlists">
+      <li ng-repeat="wordlist in wordlists | filter:{name:nameSearch}">
         <a ng-href="#/{{ wordlist.id }}">
           {{ wordlist.name }}
           <small class="badge pull-right">{{ wordlist.s_lang }} <span class="glyphicon glyphicon-arrow-right"></span> {{ wordlist.t_lang }}</small>
