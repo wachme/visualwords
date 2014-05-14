@@ -1,0 +1,20 @@
+<div class="panel panel-default">
+  <div class="panel-heading clearfix">
+    <a href="#">Wordlists</a> /
+    <h2>
+        {{ wordlist.name }}
+        <small class="badge">{{ wordlist.s_lang }} <span class="glyphicon glyphicon-arrow-right"></span> {{ wordlist.t_lang }}</small>
+    </h2>
+  </div>
+  <div class="panel-body">
+    <ul class="list-group">
+      <li ng-repeat="word in wordlist.words" class="list-group-item">
+          <img width="200" ng-src="{{ word.image }}" class="img-thumbnail" />
+          <span class="h2">
+          {{ word.word }}
+          <small>{{ word.translation }}</small>
+          </span>
+      </li>
+    </ul>
+  </div>
+</div>

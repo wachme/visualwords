@@ -13,6 +13,10 @@ app
                 templateUrl: TPL_URL+'/wordlist-list.html',
                 controller: 'WordlistsCtrl'
             })
+            .when('/:id', {
+                templateUrl: TPL_URL+'/wordlist-detail.html',
+                controller: 'WordlistCtrl'
+            });
     })
 
 var config = angular.module('config', [])
