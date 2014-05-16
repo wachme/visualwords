@@ -39,7 +39,7 @@ directives
             link: function(scope, el, attrs) {
                 scope.languages = Languages;
                 if(attrs.opposed == undefined)
-                    scope.opposed = false;
+                    scope.opposed = '!';
             },
             template: '<select ng-options="l.value as l.name+\' (\'+l.value+\')\' for l in languages'
                 + ' | filter:{value:\'!\'+opposed}"></select>',
