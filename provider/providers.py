@@ -27,7 +27,7 @@ class GoogleImages(object):
         return 'https://www.google.com/search?q=%s&tbm=isch&ijn=%d' % (quote(word), i)
     
     def parse_response(self, data, n):
-        items = re.findall(r'\<a class\=\"rg_l\" href\=\".+?imgurl\=(.*?)\&amp'
+        items = re.findall(r'\href\=\".+?\?imgurl\=(.*?)\&amp'
                            '.+?data\-src\=\"(.*?)\"', data)[:n]
         
         def u(s):
