@@ -1,0 +1,12 @@
+<div class="text-center">
+  <div class="btn-group btn-group-sm">
+    <button ng-click="prevImg()" class="btn btn-primary" ng-disabled="prevBtnDisabled">
+      <span class="glyphicon glyphicon-chevron-left"></span>
+    </button>
+    <button ng-click="nextImg()" class="btn btn-primary" ng-disabled="nextBtnDisabled">
+      <span class="glyphicon glyphicon-chevron-right"></span>
+    </button>
+  </div>
+  <br />
+  <img ng-src="{{ ngModel }}" class="word-image img-thumbnail" />
+</div>

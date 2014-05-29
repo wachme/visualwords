@@ -1,0 +1,13 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="btn-group btn-group-sm">
+      <button ng-click="showSearchTab()" class="btn btn-default" ng-class="{ true: 'active' }[tabs.search.active]"><span class="glyphicon glyphicon-search"></span> Search</button>
+      <button ng-click="showUrlTab()" class="btn btn-default" ng-class="{ true: 'active' }[tabs.url.active]"><span class="glyphicon glyphicon-pencil"></span> URL</button>
+    </div>
+  </div>
+  <div class="panel-body">
+    <image-search-tab ng-model="tabs.search.image" word="{{ word }}" ng-show="tabs.search.active"></image-search-tab>
+    <image-url-tab ng-model="tabs.url.image" ng-show="tabs.url.active"></image-url-tab>
+  </div>
+  
+</div>

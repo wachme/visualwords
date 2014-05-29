@@ -1,0 +1,18 @@
+.nopadding {
+	padding: 0;
+}
+
+.keep-inline {
+	display: inline-block;
+	width: auto;
+}
+
+.inherit {
+	background: inherit;
+	color: inherit;
+	border: inherit;
+}
+
+.word-image {
+	width: 300px;
+}

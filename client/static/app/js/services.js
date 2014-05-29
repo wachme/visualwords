@@ -11,7 +11,14 @@ services
         $resourceProvider.defaults.stripTrailingSlashes = false;
     })
     .factory('Word', function($resource, API_URL) {
-        return $resource(API_URL+'/words/:id', {'id': '@id'});
+        return $resource(API_URL+'/words/:id', {'id': '@id'}, {
+            create: {
+                method: 'POST'
+            },
+            save: {
+                method: 'PUT'
+            }
+        });
     })
     .factory('Wordlist', function($resource, Word, API_URL) {
         function transformRequest(obj) {
@@ -38,10 +45,23 @@ services
         });
     })
     
-    .factory('Languages', function($http, API_URL) {
-        return (result = angular.extend([], {
-            $promise: $http.get(API_URL+'/provider/languages/').success(function(data) {
-                angular.extend(result, data);
-            })
-        }));
+    .factory('Languages', function($http, API_URL, defer) {
+        return defer(function(d) {
+            $http.get(API_URL+'/provider/languages/').success(function(data) {
+                d.resolve(data);
+            });
+        }, []);
+    })
+    
+    .factory('images', function($http, API_URL, defer) {
+        return function(word, n) {
+            return defer(function(d) {
+                $http.post(API_URL+'/provider/images/', {
+                    word: word,
+                    n: n
+                }).success(function(data) {
+                    d.resolve(data);
+                })
+            }, []);
+        };
     });
