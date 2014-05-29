@@ -55,7 +55,9 @@ directives
             },
             templateUrl: TPL_URL+'/image-search-tab.html',
             link: function(scope) {
-                scope.images = images(scope.word, 20);
+                const wordsN = 20;
+                
+                scope.images = images(scope.word, wordsN);
                 scope.prevBtnDisabled = true;
                 scope.nextBtnDisabled = false;
                 
