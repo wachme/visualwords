@@ -70,24 +70,37 @@ services
         }, []);
     })
     
-    .factory('images', function($http, $cacheFactory, API_URL, defer) {
-        var cache = $cacheFactory('imagesCache');
-        
-        return function(word, n) {
-            return defer(function(d) {
-                var cacheId = word + n,
+    .factory('providerFactory', function($http, $cacheFactory, defer) {
+        return function(name, url, params, collection) {
+            var cache = $cacheFactory(name);
+            
+            return function() {
+                var args = Array.prototype.slice.call(arguments);
+                
+                return defer(function(d) {
+                    var cacheId = args.join(':'),
                     cached = cache.get(cacheId);
-                if(cached) {
-                    d.resolve(cached);
-                    return;
-                }
-                $http.post(API_URL+'/provider/images/', {
-                    word: word,
-                    n: n
-                }).success(function(data) {
-                    cache.put(cacheId, data);
-                    d.resolve(data);
-                })
-            }, []);
+                    if(cached) {
+                        d.resolve(cached);
+                        return;
+                    }
+                    var data = {};
+                    params.forEach(function(param, i) {
+                        data[param] = args[i];
+                    });
+                    $http.post(url, data).success(function(resp) {
+                        cache.put(cacheId, resp);
+                        d.resolve(resp);
+                    });
+                }, collection ? [] : {});
+            };
         };
+    })
+    
+    .factory('images', function(providerFactory, API_URL) {
+        return providerFactory('images', API_URL+'/provider/images/', ['word', 'n'], true);
+    })
+   
+    .factory('translations', function(providerFactory, API_URL) {
+        return providerFactory('translations', API_URL+'/provider/translations/', ['word', 's_lang', 't_lang'], true);
     });
