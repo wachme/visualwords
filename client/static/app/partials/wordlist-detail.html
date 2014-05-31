@@ -20,7 +20,7 @@
     
     <div ng-if="edit" class="h2 form-inline">
       <div class="form-group">
-        <input ng-model="wordlist.name" type="text" class="form-control" />
+        <input ng-model="wordlist.name" type="text" class="form-control input-lg" />
       </div>
       <div class="form-group badge">
             <language-input ng-model="wordlist.s_lang" opposed="wordlist.t_lang" class="form-control input-sm keep-inline inherit"></language-input>
@@ -34,11 +34,20 @@
     <ul class="list-group">
       <li ng-repeat="word in wordlist.words" class="list-group-item">
           <img ng-if="!edit" width="200" ng-src="{{ word.image }}" class="word-image img-thumbnail" />
+          
           <image-input ng-if="edit" ng-model="word.image" word="{{ word.word }}" class="img-thumbnail nopadding"></image-input>
-          <span class="h2">
-          {{ word.word }}
-          <small>{{ word.translation }}</small>
+          
+          <span ng-if="!edit" class="h2">
+            {{ word.word }}
+            <small>{{ word.translation }}</small>
           </span>
+          
+          <div ng-if="edit" class="keep-inline">
+            <div class="form-group">
+              <input ng-model="word.word" type="text" class="form-control input-lg" />
+            </div>
+            <translation-input ng-model="word.translation" word="{{ word.word }}" s_lang="{{ wordlist.s_lang }}" t_lang="{{ wordlist.t_lang }}"></translation-input>
+          </div>
       </li>
     </ul>
   </div>

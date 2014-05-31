@@ -16,3 +16,15 @@
 .word-image {
 	width: 300px;
 }
+
+.tr-list {
+	
+}
+
+.tr-list-item {
+	
+}
+
+.tr-list-item.active {
+	color: navy;
+}

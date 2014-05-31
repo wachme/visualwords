@@ -1,0 +1,12 @@
+<div class="form-group">
+  <input ng-model="ngModel" ng-focus="input.onFocus()" ng-blur="input.onBlur()" ng-keydown="input.onKeydown($event)" type="text" autocomplete="off" class="form-control" placeholder="translation" />
+  <ul ng-show="list.visible" ng-mouseenter="list.onMouseenter()" ng-mouseleave="list.onMouseleave()" class="list-group tr-list">
+    <li ng-repeat="group in list.groups" class="list-group-item">
+      <ul class="list-unstyled">
+        <li ng-repeat="tr in group" ng-click="input.setValue()" ng-mouseenter="list.onItemMouseenter($index)" ng-mouseleave="list.onItemMouseleave($index)" data-value="{{ tr }}" class="tr-list-item">
+          {{ tr }}
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
