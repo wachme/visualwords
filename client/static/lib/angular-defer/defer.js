@@ -8,15 +8,15 @@ defer.factory('defer', function($q) {
             throw 'result must be an object';
         
         var defer = $q.defer();
-        
-        angular.extend(result, {
-            $promise: defer.promise,
-            $resolved: false
-        });
-        
-        defer.promise.then(function(value) {
+        var promise = defer.promise.then(function(value) {
             result.$resolved = true;
             angular.extend(result, value);
+            return value;
+        });
+        
+        angular.extend(result, {
+            $promise: promise,
+            $resolved: false
         });
         
         func(defer);
