@@ -136,6 +136,121 @@ directives
         };
     })
     .directive('translationInput', function($timeout, TPL_URL, translations) {
+        
+        var List = function(el) {
+            var visible = false,
+                mouseover = false,
+                groups = undefined;
+            
+            function getActiveItem() {
+                return $('.tr-list-item.active', el);
+            }
+            function getItems() {
+                return $('.tr-list-item', el);
+            }
+            function activateItem(item) {
+                var active = getActiveItem();
+                if(active.size())
+                    active.removeClass('active');
+                if(item)
+                    item.addClass('active');
+            }
+            
+            this.onMouseenter = function() {
+                mouseover = true;
+            };
+            this.onMouseleave = function() {
+                mouseover = false;
+            };
+            this.isVisible = function() {
+                return visible;
+            };
+            this.show = function() {
+                if(groups)
+                    visible = true;
+            };
+            this.hide = function(force) {
+                if(force || !mouseover)
+                    visible = false;
+            };
+            this.getGroups = function() {
+                return groups;
+            };
+            this.getValue = function() {
+                return getActiveItem().data('value')
+            };
+            this.activateNext = function() {
+                var active = getActiveItem();
+                if(active.size()) {
+                    var index = getItems().index(active);
+                    if(index < getItems().size()-1)
+                        activateItem(getItems().eq(index+1));
+                }
+                else 
+                    activateItem(getItems().eq(0));
+            };
+            this.activatePrev = function() {
+                var active = getActiveItem();
+                if(active.size()) {
+                    var index = getItems().index(active);
+                    if(index > 0)
+                        activateItem(getItems().eq(index-1));
+                }
+            };
+            this.onItemMouseenter = function(e) {
+                activateItem($(e.target));
+            };
+            this.onItemMouseleave = function() {
+                activateItem();
+            };
+            this.refresh = function(data, value) {
+                if(!data || !data.length) {
+                    groups = undefined;
+                    this.hide();
+                    return;
+                }
+                groups = [];
+                
+                data.forEach(function(group) {
+                    var newGroup = [];
+                    group.forEach(function(tr) {
+                        if(tr.indexOf(value) == 0)
+                            newGroup.push(tr);
+                    });
+                    if(newGroup.length)
+                        groups.push(newGroup);
+                });
+            };
+        };
+        
+        var Input = function(el, list, setValue) {
+            this.setValue = function() {
+                var value = list.getValue();
+                setValue(value);
+                list.hide(true);
+                $timeout(function() {
+                    el.blur();
+                });
+            }
+            this.onFocus = function() {
+                list.show();
+            };
+            this.onBlur = function() {
+                list.hide();
+            };
+            this.onKeydown = function(e) {
+                if([13, 38, 40].indexOf(e.keyCode) != -1)
+                    e.preventDefault();
+                if(e.keyCode == 38) {
+                    list.activatePrev();
+                }
+                else if(e.keyCode == 40)
+                    list.activateNext();
+                else if(e.keyCode == 13 && list.getValue())
+                    this.setValue();
+            };
+        };
+        
         return {
             restrict: 'E',
             replace: true,
@@ -148,131 +263,24 @@ directives
             require: 'ngModel',
             templateUrl: TPL_URL+'/translation-input.html',
             link: function(scope, element, attrs, ngModel) {
-                var $element = $(element);
-                var groups;
-                
-                function loadTranslations() {
-                    groups = translations(scope.word, scope.sLang, scope.tLang);
-                    groups.$promise.then(function(resp) {
-                        if(resp == 'false')
-                            groups = undefined;
-                        scope.list.init();
-                    });
-                }
+                var $element = $(element),
+                    data;
 
-                scope.list = {
-                    $el: $('.tr-list', $element),
-                    visible: false,
-                    mouseover: false,
-                    groups: undefined,
-                    onMouseenter: function() {
-                        scope.list.mouseover = true;
-                    },
-                    onMouseleave: function() {
-                        scope.list.mouseover = false;
-                    },
-                    show: function() {
-                        if(scope.list.groups)
-                            scope.list.visible = true;
-                    },
-                    hide: function() {
-                        scope.list.visible = false;
-                    },
-                    getItems: function() {
-                        return $('.tr-list-item', scope.list.$el);
-                    },
-                    getItem: function(index) {
-                        return scope.list.getItems().eq(index);
-                    },
-                    getActiveItem: function() {
-                        return $('.tr-list-item.active', scope.list.$el);
-                    },
-                    setActiveItem: function(item) {
-                        var active = scope.list.getActiveItem();
-                        if(active.size())
-                            active.removeClass('active');
-                        if(item)
-                            item.addClass('active');
-                    },
-                    onItemMouseenter: function(index) {
-                        scope.list.setActiveItem(scope.list.getItem(index));
-                    },
-                    onItemMouseleave: function(index) {
-                        scope.list.setActiveItem();
-                    },
-                    setNextActive: function() {
-                        var active = scope.list.getActiveItem();
-                        if(active.size()) {
-                            var index = scope.list.getItems().index(active);
-                            if(index < scope.list.getItems().size()-1)
-                                scope.list.setActiveItem(scope.list.getItem(index+1));
-                        }
-                        else 
-                            scope.list.setActiveItem(scope.list.getItem(0));
-                    },
-                    setPrevActive: function() {
-                        var active = scope.list.getActiveItem();
-                        if(active.size()) {
-                            var index = scope.list.getItems().index(active);
-                            if(index > 0)
-                                scope.list.setActiveItem(scope.list.getItem(index-1));
-                        }
-                    },
-                    init: function() {
-                        if(!groups) {
-                            scope.list.groups = undefined;
-                            scope.list.hide();
-                            return;
-                        }
-                        scope.list.groups = [];
-                        
-                        groups.forEach(function(group) {
-                            var newGroup = [];
-                            group.forEach(function(tr) {
-                                if(tr.indexOf(scope.ngModel) == 0)
-                                    newGroup.push(tr);
-                            });
-                            if(newGroup.length)
-                                scope.list.groups.push(newGroup);
-                        });
-                        
-                        if(scope.input.$el.is(':focus'))
-                            scope.list.show();
-                    }
-                };
-                
-                scope.input = {
-                    $el: $('input[type="text"]', $element),
-                    onFocus: function() {
-                        scope.list.show();
-                    },
-                    onBlur: function() {
-                        if(!scope.list.mouseover)
-                            scope.list.hide();
-                    },
-                    onKeydown: function(e) {
-                        if([13, 38, 40].indexOf(e.keyCode) != -1)
-                            e.preventDefault();
-                        if(e.keyCode == 38) {
-                            scope.list.setPrevActive();
-                        }
-                        else if(e.keyCode == 40)
-                            scope.list.setNextActive();
-                        else if(e.keyCode == 13 && scope.list.getActiveItem().size())
-                            scope.input.setValue();
-                    },
-                    setValue: function() {
-                        var value = scope.list.getActiveItem().data('value');
-                        scope.ngModel = value;
-                        scope.list.hide();
-                        $timeout(function() {
-                            scope.input.$el.blur();
-                        });
-                    }
-                };
-                
-                scope.$watch('word', loadTranslations);
-                scope.$watch('ngModel', scope.list.init);
+                scope.list = new List($('.tr-list', $element));
+                scope.input = new Input($('input[type="text"]', $element), scope.list,
+                                        ngModel.$setViewValue);
+
+                scope.$watchGroup(['word', 'sLang', 'tLang'], function() {
+                    data = translations(scope.word, scope.sLang, scope.tLang);
+                    data.$promise.then(function(resp) {
+                        if(resp == 'false')
+                            data = undefined;
+                        scope.list.refresh(data, scope.ngModel);
+                    });
+                });
+                scope.$watch('ngModel', function(value) {
+                    scope.list.refresh(data, value);
+                });
             }
         };
     });
