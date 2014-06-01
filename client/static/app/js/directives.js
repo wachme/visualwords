@@ -156,6 +156,9 @@ directives
                     item.addClass('active');
             }
             
+            this.getEl = function() {
+                return el;
+            };
             this.onMouseenter = function() {
                 mouseover = true;
             };
@@ -224,6 +227,8 @@ directives
         };
         
         var Input = function(el, list, setValue) {
+            list.getEl().width(el.outerWidth());
+            
             this.setValue = function() {
                 var value = list.getValue();
                 setValue(value);

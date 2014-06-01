@@ -18,13 +18,31 @@
 }
 
 .tr-list {
-	
+	display: block;
+	position: absolute;
+	margin-top: -3px;
+	z-index: 999;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+}
+
+.tr-list .list-group-item {
+	padding: 10px 0;
+	border-color: #66afe9;
+}
+
+.tr-list .list-group-item:first-child {
+	border-top: none;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
 }
 
 .tr-list-item {
-	
+	display: block;
+	padding: 2px 15px;
 }
 
 .tr-list-item.active {
-	color: navy;
+	background-color: #66afe9;
+	color: white;
 }
