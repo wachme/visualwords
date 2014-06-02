@@ -1,5 +1,5 @@
 <div class="text-center">
-  <div class="btn-group btn-group-sm">
+  <div ng-show="visible" class="btn-group btn-group-sm">
     <button ng-click="prevImg()" class="btn btn-primary" ng-disabled="prevBtnDisabled">
       <span class="glyphicon glyphicon-chevron-left"></span>
     </button>
@@ -8,5 +8,5 @@
     </button>
   </div>
   <br />
-  <img ng-src="{{ ngModel }}" class="word-image img-thumbnail" />
+  <img ng-show="visible" ng-src="{{ ngModel }}" class="word-image img-thumbnail" />
 </div>

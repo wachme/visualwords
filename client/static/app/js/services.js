@@ -21,13 +21,19 @@ services
         });
     })
     .factory('Wordlist', function($resource, $q, Word, API_URL) {
+        
         function transformRequest(obj) {
             delete obj.words;
             return model_stringify(obj);
         }
         function transformResponse(data) {
             obj = JSON.parse(data);
-            obj.words = obj.words.map(function(w) { return new Word(w); });
+            obj.words = obj.words.map(function(w) {
+                return new Word(w);
+            });
+            obj.$_words = obj.words.map(function(w) {
+                return w.id;
+            });
             return obj;
         }
         var resource = $resource(API_URL+'/wordlists/:id', {'id': '@id'}, {
@@ -51,10 +57,23 @@ services
             var self = this,
                 args = arguments,
                 promises = [];
+            
             this.words.forEach(function(word) {
-                promises.push(word.$save());
+                var i = self.$_words.indexOf(word.id);
+                if(i != -1) {
+                    promises.push(word.$save());
+                    self.$_words.splice(i, 1);
+                }
+                else {
+                    word.wordlist = self.id;
+                    promises.push(word.$create());
+                }
             });
-            return $q.all(promises).then(function() {
+            this.$_words.forEach(function(id) {
+                promises.push(Word.prototype.$remove.call({ id: id }));
+            });
+            
+            return $q.all(promises)['finally'](function() {
                 return $save.apply(self, args);
             });
         };

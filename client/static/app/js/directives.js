@@ -45,7 +45,7 @@ directives
                 + ' | filter:{value:\'!\'+opposed}"></select>',
         };
     })
-    .directive('imageSearchTab', function(TPL_URL, images) {
+    .directive('imageSearchTab', function($timeout, TPL_URL, images) {
         return {
             restrict: 'E',
             replace: true,
@@ -55,7 +55,8 @@ directives
             },
             templateUrl: TPL_URL+'/image-search-tab.html',
             link: function(scope) {
-                const wordsN = 20;
+                const wordsN = 20,
+                      timeout = 1000;
                 var imgI;
                 
                 function setImage(i) {
@@ -65,6 +66,10 @@ directives
                 }
                 
                 function loadImages() {
+                    if(!scope.word) {
+                        scope.visible = false;
+                        return;
+                    }
                     scope.images = images(scope.word, wordsN);
                     
                     scope.prevBtnDisabled = true;
@@ -74,9 +79,10 @@ directives
                     
                     scope.images.$promise.then(function(images) {
                         scope.ngModel = images[0].preview;
+                        scope.visible = true;
                     });
                 }
-                
+                scope.visible = false;
                 scope.prevImg = function() {
                     setImage(--imgI);
                 };
@@ -84,7 +90,9 @@ directives
                     setImage(++imgI)
                 };
                 
-                scope.$watch('word', loadImages);
+                scope.$watch('word', function() {
+                    $timeout(loadImages, timeout);
+                });
             }
         };
     })
@@ -217,7 +225,7 @@ directives
                 data.forEach(function(group) {
                     var newGroup = [];
                     group.forEach(function(tr) {
-                        if(tr.indexOf(value) == 0)
+                        if(value == undefined || tr.indexOf(value) == 0)
                             newGroup.push(tr);
                     });
                     if(newGroup.length)
@@ -276,6 +284,10 @@ directives
                                         ngModel.$setViewValue);
 
                 scope.$watchGroup(['word', 'sLang', 'tLang'], function() {
+                    if(!scope.word) {
+                        scope.list.refresh([], scope.ngModel);
+                        return;
+                    }
                     data = translations(scope.word, scope.sLang, scope.tLang);
                     data.$promise.then(function(resp) {
                         if(resp == 'false')

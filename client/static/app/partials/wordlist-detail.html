@@ -35,7 +35,7 @@
   </div>
   <div class="panel-body">
     <ul class="list-group">
-      <li ng-repeat="word in wordlist.words" class="list-group-item">
+      <li ng-repeat="word in words" class="list-group-item">
           <img ng-if="!edit" width="200" ng-src="{{ word.image }}" class="word-image img-thumbnail" />
           
           <image-input ng-if="edit" ng-model="word.image" word="{{ word.word }}" class="img-thumbnail nopadding"></image-input>
@@ -51,6 +51,8 @@
             </div>
             <translation-input ng-model="word.translation" word="{{ word.word }}" s_lang="{{ wordlist.s_lang }}" t_lang="{{ wordlist.t_lang }}"></translation-input>
           </div>
+          
+          <button ng-if="edit" ng-click="remove(word)" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-remove"></span></button>
       </li>
     </ul>
   </div>

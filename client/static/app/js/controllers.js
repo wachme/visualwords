@@ -10,17 +10,44 @@ controllers
             });
         };
     })
-    .controller('WordlistCtrl', function($scope, $routeParams, $route, Word, Wordlist) {
-        $scope.wordlist = Wordlist.get({id: $routeParams.id});
+    .controller('WordlistCtrl', function($scope, $routeParams, $route, Wordlist, Word) {
+        function addNewWord() {
+            $scope.newWord = new Word();
+            $scope.words.push($scope.newWord);
+        }
+        
+        $scope.$watch('newWord.word', function(w) {
+            if(w) addNewWord();
+        });
+        
+        $scope.wordlist = Wordlist.get({id: $routeParams.id}, function() {
+            $scope.words = $scope.wordlist.words;
+        });
+        
         $scope.edit = false;
         
         $scope.toggleEdit = function() {
-            if($scope.edit)
-                $scope.wordlist.$save();
+            if($scope.edit) {
+                $scope.words.pop();
+                $scope.wordlist.$save(function() {
+                    $scope.words = $scope.wordlist.words;
+                });
+            }
+            else {
+                addNewWord();
+            }
+            
             $scope.edit = !$scope.edit;
         };
         
         $scope.discardEdit = function() {
             $route.reload();
+        };
+        
+        $scope.remove = function(word) {
+            var words = $scope.wordlist.words,
+                i = words.indexOf(word);
+            if(i != -1 && i != words.length-1)
+                words.splice(i, 1);
         };
     });
