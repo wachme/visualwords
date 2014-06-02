@@ -6,6 +6,9 @@
         <a href="#">Wordlists</a> /
       </div>
       <div class="col-xs-6 text-right">
+          <button ng-if="edit" class="btn btn-default" ng-click="discardEdit()">
+            <span class="glyphicon glyphicon-ban-circle"></span><span class="hidden-xs"> Discard</span>
+          </button>
           <button class="btn btn-primary" ng-click="toggleEdit()">
             <span ng-if="!edit" class="glyphicon glyphicon-edit"></span><span ng-if="!edit" class="hidden-xs"> Edit wordlist</span>
             <span ng-if="edit" class="glyphicon glyphicon-check"></span><span ng-if="edit" class="hidden-xs"> Save wordlist</span>

@@ -10,7 +10,7 @@ controllers
             });
         };
     })
-    .controller('WordlistCtrl', function($scope, $routeParams, Word, Wordlist) {
+    .controller('WordlistCtrl', function($scope, $routeParams, $route, Word, Wordlist) {
         $scope.wordlist = Wordlist.get({id: $routeParams.id});
         $scope.edit = false;
         
@@ -18,5 +18,9 @@ controllers
             if($scope.edit)
                 $scope.wordlist.$save();
             $scope.edit = !$scope.edit;
+        };
+        
+        $scope.discardEdit = function() {
+            $route.reload();
         };
     });
