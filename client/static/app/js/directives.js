@@ -34,15 +34,22 @@ directives
             restrict: 'E',
             replace: true,
             scope: {
-                opposed: '=?'
+                ngModel: '=',
+                opposed: '='
             },
             link: function(scope, el, attrs) {
                 scope.languages = Languages;
                 if(attrs.opposed == undefined)
                     scope.opposed = '!';
+                
+                scope.$watch('ngModel', function(value, old) {
+                    if(value == scope.opposed) {
+                        scope.opposed = old;
+                    }
+                });
+                
             },
-            template: '<select ng-options="l.value as l.name+\' (\'+l.value+\')\' for l in languages'
-                + ' | filter:{value:\'!\'+opposed}"></select>',
+            template: '<select ng-options="l.value as l.name+\' (\'+l.value+\')\' for l in languages"></select>',
         };
     })
     .directive('imageSearchTab', function($timeout, TPL_URL, promiseDefer, findImages) {
