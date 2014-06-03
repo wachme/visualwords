@@ -10,7 +10,7 @@ controllers
             });
         };
     })
-    .controller('WordlistCtrl', function($scope, $routeParams, $route, Wordlist, Word) {
+    .controller('WordlistCtrl', function($scope, $routeParams, $route, $location, Wordlist, Word) {
         function addNewWord() {
             $scope.newWord = new Word();
             $scope.words.push($scope.newWord);
@@ -28,7 +28,6 @@ controllers
         
         $scope.toggleEdit = function() {
             if($scope.edit) {
-                $scope.words.pop();
                 $scope.wordlist.$save(function() {
                     $scope.words = $scope.wordlist.words;
                 });
@@ -44,7 +43,13 @@ controllers
             $route.reload();
         };
         
-        $scope.remove = function(word) {
+        $scope.remove = function() {
+            $scope.wordlist.$remove(function() {
+                $location.path('/');
+            });
+        };
+        
+        $scope.removeWord = function(word) {
             var words = $scope.wordlist.words,
                 i = words.indexOf(word);
             if(i != -1 && i != words.length-1)

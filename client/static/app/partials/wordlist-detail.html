@@ -30,6 +30,7 @@
             <span class="glyphicon glyphicon-arrow-right keep-inline"></span>
             <language-input ng-model="wordlist.t_lang" opposed="wordlist.s_lang" class="form-control input-sm keep-inline inherit"></language-input>
       </div>
+      <button ng-click="remove()" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span> Delete wordlist</button>
     </div>
 
   </div>
@@ -52,7 +53,7 @@
             <translation-input ng-model="word.translation" word="{{ word.word }}" s_lang="{{ wordlist.s_lang }}" t_lang="{{ wordlist.t_lang }}"></translation-input>
           </div>
           
-          <button ng-if="edit" ng-click="remove(word)" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-remove"></span></button>
+          <button ng-if="edit" ng-click="removeWord(word)" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-remove"></span></button>
       </li>
     </ul>
   </div>
