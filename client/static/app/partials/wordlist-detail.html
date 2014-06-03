@@ -36,7 +36,7 @@
   </div>
   <div class="panel-body">
     <ul class="list-group">
-      <li ng-repeat="word in words" class="list-group-item">
+      <li ng-repeat="word in words" class="list-group-item word-list-item">
           <img ng-if="!edit" width="200" ng-src="{{ word.image }}" class="word-image img-thumbnail" />
           
           <image-input ng-if="edit" ng-model="word.image" word="{{ word.word }}" class="img-thumbnail nopadding"></image-input>

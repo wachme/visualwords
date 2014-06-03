@@ -1,12 +1,17 @@
 <div class="form-group">
-  <input ng-model="ngModel" ng-focus="input.onFocus()" ng-blur="input.onBlur()" ng-keydown="input.onKeydown($event)" type="text" autocomplete="off" class="form-control tr-input" placeholder="translation" />
-  <ul ng-show="list.isVisible()" ng-mouseenter="list.onMouseenter()" ng-mouseleave="list.onMouseleave()" class="list-group tr-list">
-    <li ng-repeat="group in list.getGroups()" class="list-group-item">
-      <ul class="list-unstyled">
-        <li ng-repeat="tr in group" ng-click="input.setValue()" ng-mouseenter="list.onItemMouseenter($event)" ng-mouseleave="list.onItemMouseleave($event)" data-value="{{ tr }}" class="tr-list-item">
-          {{ tr }}
+  <input ng-model="ngModel" ng-focus="input.onFocus()" ng-blur="input.onBlur()" ng-keydown="input.onKeydown($event)" type="text" autocomplete="off" class="form-control" placeholder="translation" />
+  <div ng-show="list.isVisible()" ng-mouseenter="list.onMouseenter()" ng-mouseleave="list.onMouseleave()" class="tr-box">
+    <div class="tr-box-content">
+      <div ng-show="list.isLoading()" class="alert alert-info loader"></div>
+      <ul class="list-group">
+        <li ng-repeat="group in list.getGroups()" class="list-group-item">
+          <ul class="list-unstyled">
+            <li ng-repeat="tr in group" ng-click="input.setValue()" ng-mouseenter="list.onItemMouseenter($event)" ng-mouseleave="list.onItemMouseleave($event)" data-value="{{ tr }}" class="tr-list-item">
+              {{ tr }}
+            </li>
+          </ul>
         </li>
       </ul>
-    </li>
-  </ul>
+    </div>
+  </div>
 </div>

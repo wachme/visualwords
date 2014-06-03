@@ -45,7 +45,7 @@ directives
                 + ' | filter:{value:\'!\'+opposed}"></select>',
         };
     })
-    .directive('imageSearchTab', function($timeout, TPL_URL, images) {
+    .directive('imageSearchTab', function($timeout, TPL_URL, promiseDefer, findImages) {
         return {
             restrict: 'E',
             replace: true,
@@ -57,27 +57,33 @@ directives
             link: function(scope) {
                 const wordsN = 20,
                       timeout = 1000;
-                var imgI;
+                var images,
+                    imgI,
+                    defer;
                 
                 function setImage(i) {
-                    scope.ngModel = scope.images[i].preview;
+                    scope.ngModel = images[i].preview;
                     scope.prevBtnDisabled = imgI == 0;
-                    scope.nextBtnDisabled = imgI == scope.images.length - 1;
+                    scope.nextBtnDisabled = imgI == images.length - 1;
                 }
                 
                 function loadImages() {
+                    if(defer)
+                        defer.reject();
+                    
                     if(!scope.word) {
                         scope.visible = false;
                         return;
                     }
-                    scope.images = images(scope.word, wordsN);
+                    images = findImages(scope.word, wordsN);
+                    defer = promiseDefer(images.$promise);
                     
                     scope.prevBtnDisabled = true;
                     scope.nextBtnDisabled = false;
                     
                     imgI = 0;
                     
-                    scope.images.$promise.then(function(images) {
+                    defer.promise.then(function(images) {
                         scope.ngModel = images[0].preview;
                         scope.visible = true;
                     });
@@ -91,7 +97,7 @@ directives
                 };
                 
                 scope.$watch('word', function() {
-                    $timeout(loadImages, timeout);
+                    loadImages();
                 });
             }
         };
@@ -106,7 +112,7 @@ directives
             templateUrl: TPL_URL+'/image-url-tab.html'
         };
     })
-    .directive('imageInput', function(TPL_URL, images) {
+    .directive('imageInput', function(TPL_URL) {
         return {
             restrict: 'E',
             replace: true,
@@ -143,10 +149,11 @@ directives
             }
         };
     })
-    .directive('translationInput', function($timeout, TPL_URL, translations) {
+    .directive('translationInput', function($timeout, TPL_URL, promiseDefer, findTranslations) {
         
         var List = function(el) {
             var visible = false,
+                loading = false,
                 mouseover = false,
                 groups = undefined;
             
@@ -174,15 +181,23 @@ directives
                 mouseover = false;
             };
             this.isVisible = function() {
-                return visible;
+                return (groups || loading) && visible;
+            };
+            this.isLoading = function() {
+                return loading;
             };
             this.show = function() {
-                if(groups)
-                    visible = true;
+                visible = true;
             };
             this.hide = function(force) {
                 if(force || !mouseover)
                     visible = false;
+            };
+            this.startLoading = function() {
+                loading = true;
+            };
+            this.stopLoading = function() {
+                loading = false;
             };
             this.getGroups = function() {
                 return groups;
@@ -231,12 +246,19 @@ directives
                     if(newGroup.length)
                         groups.push(newGroup);
                 });
+                if(!groups.length)
+                    groups = undefined;
+
+                this.stopLoading();
             };
         };
         
         var Input = function(el, list, setValue) {
             list.getEl().width(el.outerWidth());
             
+            this.getEl = function() {
+                return el;
+            };
             this.setValue = function() {
                 var value = list.getValue();
                 setValue(value);
@@ -277,22 +299,30 @@ directives
             templateUrl: TPL_URL+'/translation-input.html',
             link: function(scope, element, attrs, ngModel) {
                 var $element = $(element),
-                    data;
+                    data,
+                    defer;
 
-                scope.list = new List($('.tr-list', $element));
+                scope.list = new List($('.tr-box', $element));
                 scope.input = new Input($('input[type="text"]', $element), scope.list,
                                         ngModel.$setViewValue);
 
                 scope.$watchGroup(['word', 'sLang', 'tLang'], function() {
-                    if(!scope.word) {
-                        scope.list.refresh([], scope.ngModel);
+                    if(defer)
+                        defer.reject();
+                    
+                    scope.list.refresh(undefined, scope.ngModel);
+                    if(!scope.word)
                         return;
-                    }
-                    data = translations(scope.word, scope.sLang, scope.tLang);
-                    data.$promise.then(function(resp) {
+                    
+                    scope.list.startLoading();
+                    data = findTranslations(scope.word, scope.sLang, scope.tLang);
+                    defer = promiseDefer(data.$promise);
+
+                    defer.promise.then(function(resp) {
                         if(resp == 'false')
-                            data = undefined;
-                        scope.list.refresh(data, scope.ngModel);
+                            resp = undefined;
+                        
+                        scope.list.refresh(resp, scope.ngModel);
                     });
                 });
                 scope.$watch('ngModel', function(value) {

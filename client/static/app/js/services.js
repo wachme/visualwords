@@ -116,10 +116,20 @@ services
         };
     })
     
-    .factory('images', function(providerFactory, API_URL) {
+    .factory('findImages', function(providerFactory, API_URL) {
         return providerFactory('images', API_URL+'/provider/images/', ['word', 'n'], true);
     })
    
-    .factory('translations', function(providerFactory, API_URL) {
+    .factory('findTranslations', function(providerFactory, API_URL) {
         return providerFactory('translations', API_URL+'/provider/translations/', ['word', 's_lang', 't_lang'], true);
+    })
+    
+    .factory('promiseDefer', function($q) {
+        return function(promise) {
+            var defer = $q.defer();
+            promise.then(function(result) {
+                defer.resolve(result);
+            });
+            return defer;
+        }
     });
