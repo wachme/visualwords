@@ -74,10 +74,20 @@ directives
                     scope.nextBtnDisabled = imgI == images.length - 1;
                 }
                 
+                function startLoading() {
+                    scope.visible = false;
+                    scope.loading = true;
+                }
+                function stopLoading() {
+                    scope.visible = true;
+                    scope.loading = false;
+                }
+                
                 function loadImages() {
                     if(defer)
                         defer.reject();
                     
+                    stopLoading();
                     if(!scope.word) {
                         scope.visible = false;
                         return;
@@ -90,12 +100,16 @@ directives
                     
                     imgI = 0;
                     
+                    startLoading();
                     defer.promise.then(function(images) {
                         scope.ngModel = images[0].preview;
-                        scope.visible = true;
+                        stopLoading();
                     });
                 }
+                
                 scope.visible = false;
+                scope.loading = false;
+                
                 scope.prevImg = function() {
                     setImage(--imgI);
                 };
@@ -198,7 +212,7 @@ directives
             };
             this.hide = function(force) {
                 if(force || !mouseover)
-                    visible = false;
+                    visible = mouseover = false;
             };
             this.startLoading = function() {
                 loading = true;
@@ -239,7 +253,6 @@ directives
             this.refresh = function(data, value) {
                 if(!data || !data.length) {
                     groups = undefined;
-                    this.hide();
                     return;
                 }
                 groups = [];
@@ -255,8 +268,6 @@ directives
                 });
                 if(!groups.length)
                     groups = undefined;
-
-                this.stopLoading();
             };
         };
         
@@ -318,6 +329,7 @@ directives
                         defer.reject();
                     
                     scope.list.refresh(undefined, scope.ngModel);
+                    scope.list.stopLoading();
                     if(!scope.word)
                         return;
                     
@@ -327,9 +339,10 @@ directives
 
                     defer.promise.then(function(resp) {
                         if(resp == 'false')
-                            resp = undefined;
+                            data = undefined;
                         
-                        scope.list.refresh(resp, scope.ngModel);
+                        scope.list.refresh(data, scope.ngModel);
+                        scope.list.stopLoading();
                     });
                 });
                 scope.$watch('ngModel', function(value) {
